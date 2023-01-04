@@ -1,0 +1,44 @@
+{
+  "dependencies": {
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.2.3",
+    "eslint": "^8.31.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  },
+  "name": "@hexlet/code",
+  "description": "[![Actions Status](https://github.com/semenChe/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/semenChe/frontend-project-11/actions) [![Maintainability](https://api.codeclimate.com/v1/badges/6f44c5a956e90533131e/maintainability)](https://codeclimate.com/github/semenChe/frontend-project-11/maintainability)",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "@babel/core": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
+    "@webpack-cli/generators": "^3.0.1",
+    "autoprefixer": "^10.4.13",
+    "babel-loader": "^9.1.0",
+    "css-loader": "^6.7.3",
+    "html-webpack-plugin": "^5.5.0",
+    "postcss-loader": "^7.0.2",
+    "sass": "^1.57.1",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1",
+    "workbox-webpack-plugin": "^6.5.4"
+  },
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semenChe/frontend-project-11.git"
+  },
+  "author": "semenChe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/semenChe/frontend-project-11/issues"
+  },
+  "homepage": "https://github.com/semenChe/frontend-project-11#readme"
+}
