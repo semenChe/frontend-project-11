@@ -21,7 +21,7 @@ module.exports = {
       {
         test: /\.(js)$/i,
         exclude: /node_modules/,
-        use: ['babel-loader']
+        use: ['babel-loader'],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
@@ -34,6 +34,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['*', '.js']
+    extensions: ['*', '.js'],
   },
 };
