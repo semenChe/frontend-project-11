@@ -31,7 +31,7 @@
     "workbox-webpack-plugin": "^6.5.4"
   },
   "scripts": {
-    "start": "webpack serve --mode development",
+    "build": "webpack serve --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
