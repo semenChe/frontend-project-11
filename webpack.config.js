@@ -18,10 +18,11 @@ module.exports = {
   ],
   module: {
     rules: [
-      // {
-      //     test: /\.(js|jsx)$/i,
-      //     loader: 'babel-loader',
-      // },
+      {
+          test: /\.(js|jsx)$/i,
+          exclude: /node_modules/,
+        use: ['babel-loader']
+      },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
         type: 'asset',
@@ -31,5 +32,8 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
       },
     ],
+  },
+  resolve: {
+    extensions: ['*', '.js']
   },
 };
