@@ -3,7 +3,9 @@
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0"
+    "eslint-plugin-import": "^2.26.0",
+    "on-change": "^4.0.2",
+    "yup": "^0.32.11"
   },
   "name": "@hexlet/code",
   "description": "[![Actions Status](https://github.com/semenChe/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/semenChe/frontend-project-11/actions) [![Maintainability](https://api.codeclimate.com/v1/badges/6f44c5a956e90533131e/maintainability)](https://codeclimate.com/github/semenChe/frontend-project-11/maintainability)",
