@@ -1,4 +1,4 @@
-const handleError = (elements, error) => {
+const handleError = (elements, error, i18nInstance) => {
   elements.feedback.classList.remove('text-success');
   elements.feedback.classList.add('text-danger');
   if (error === '') {
@@ -8,14 +8,14 @@ const handleError = (elements, error) => {
   }
 
   elements.urlInput.classList.add('is-invalid');
-  elements.feedback.textContent = error;
+  elements.feedback.textContent = i18nInstance.t(`errors.${error}`);
   elements.urlInput.focus();
 };
 
-export default (elements) => (path, value) => {
+export default (elements, state, i18nInstance) => (path, value) => {
   switch (path) {
     case 'form.error':
-      handleError(elements, value);
+      handleError(elements, value, i18nInstance);
       break;
 
     default:
