@@ -30,14 +30,14 @@ const makeContainer = (title, state, elements, i18nInstance) => {
     card.append(listGroup);
   }
   if (title === 'posts') {
-    console.log(state.posts);
     const listGroup = document.createElement('ul');
     listGroup.classList.add('list-group', 'border-0', 'rounded-0');
     state.posts.forEach((post) => {
       const listGroupItem = document.createElement('li');
       listGroupItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
       const a = document.createElement('a');
-      a.classList.add('fw-bold');
+      // console.log(state.readPostIds);
+      a.classList.add(state.readPostIds.has(post.id) ? ('fw-normal', 'link-secondary') : 'fw-bold');
       a.href = post.link;
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
@@ -98,6 +98,15 @@ export default (state, elements, i18nInstance) => (path, value) => {
       if (value === 'finished') {
         finishHandler(state, elements, i18nInstance);
       }
+      if (value === 'filling') {
+        elements.btn.disabled = false;
+      }
+      break;
+    case 'readPostIds':
+      makeContainer('posts', state, elements, i18nInstance);
+      break;
+    case 'posts':
+      makeContainer('posts', state, elements, i18nInstance);
       break;
 
     default:
