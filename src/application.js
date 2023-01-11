@@ -2,7 +2,7 @@ import { string, setLocale } from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
 import axios from 'axios';
-import { uniqueId } from 'lodash';
+import { uniqueId, flatten } from 'lodash';
 
 import resources from './locales/index.js';
 import render from './render.js';
@@ -45,8 +45,13 @@ const getAxiosResponse = (url) => {
   return axios.get(preparedURL);
 };
 
-const addFeeds = (id, title, description, watchedState) => {
-  watchedState.feeds.push({ id, title, description });
+const addFeeds = (id, title, description, link, watchedState) => {
+  watchedState.feeds.push({
+    id,
+    title,
+    description,
+    link,
+  });
 };
 
 const addPosts = (feedId, posts, watchedState) => {
@@ -62,13 +67,13 @@ const addPosts = (feedId, posts, watchedState) => {
 
 const postsUpdate = (url, feedId, watchedState) => {
   const inner = () => {
-    getAxiosResponse(url)
-      .then((response) => {
-        const parsedRSS = parseRSS(response.data.contents);
-        const postsUrls = watchedState.posts
-          .filter((post) => feedId === post.feedId)
-          .map(({ link }) => link);
-        const newPosts = parsedRSS.posts.filter(({ link }) => !postsUrls.includes(link));
+    const linkesFeed = watchedState.feeds.map(({ link }) => getAxiosResponse(link));
+    Promise.all(linkesFeed)
+      .then((responses) => {
+        const postsParsed = responses.map((response) => parseRSS(response.data.contents).posts);
+        const receivedPosts = flatten(postsParsed);
+        const linkPosts = watchedState.posts.map(({ link }) => link);
+        const newPosts = receivedPosts.filter(({ link }) => !linkPosts.includes(link));
         if (newPosts.length > 0) {
           addPosts(feedId, newPosts, watchedState);
         }
@@ -130,7 +135,7 @@ export default () => {
             const title = parsedRSS.feed.channelTitle;
             const description = parsedRSS.feed.channelDescription;
 
-            addFeeds(feedId, title, description, watchedState);
+            addFeeds(feedId, title, description, state.data, watchedState);
             addPosts(feedId, parsedRSS.posts, watchedState);
 
             postsUpdate(state.data, feedId, watchedState);
