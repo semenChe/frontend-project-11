@@ -148,7 +148,7 @@ export default () => {
           });
       });
       elements.posts.addEventListener('click', (e) => {
-        const postId = +e.target.dataset.id;
+        const postId = e.target.dataset.id;
         if (postId) {
           watchedState.readPostIds.add(postId);
         }
