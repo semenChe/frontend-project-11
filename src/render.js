@@ -108,9 +108,13 @@ export default (state, elements, i18nInstance) => (path, value) => {
     case 'posts':
       makeContainer('posts', state, elements, i18nInstance);
       break;
+    case 'modal':
+      elements.modal.title.textContent = value.title;
+      elements.modal.body.textContent = value.description;
+      elements.modal.fullArticleButton.href = value.link;
+      break;
 
     default:
       break;
   }
 };
-// http://www.ixbt.com/export/utf8/softnews.rss
