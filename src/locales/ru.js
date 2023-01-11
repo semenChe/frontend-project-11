@@ -9,7 +9,7 @@ export default {
       notValidURL: 'Ссылка должна быть валидным URL',
       dataIsNotValid: 'введенные данные невалидны',
       noRSS: 'Ресурс не содержит валидный RSS',
-      networkError: 'Ошибка сети',
+      NetworkError: 'Ошибка сети',
       default: 'Неизвестная ошибка. Что-то пошло не так',
     },
   },
