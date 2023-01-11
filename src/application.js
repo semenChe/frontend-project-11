@@ -81,7 +81,6 @@ const postsUpdate = (url, feedId, watchedState) => {
         setTimeout(inner, timeout);
       });
   };
-
   setTimeout(inner, timeout);
 };
 
