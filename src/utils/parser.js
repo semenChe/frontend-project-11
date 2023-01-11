@@ -1,6 +1,5 @@
-const domParser = new DOMParser();
-
 export default (contents) => {
+  const domParser = new DOMParser();
   const xmlDocument = domParser.parseFromString(contents, 'text/xml');
   const rootTagName = xmlDocument.documentElement.tagName.toLowerCase();
   if (rootTagName !== 'rss') {
@@ -24,7 +23,5 @@ export default (contents) => {
     };
   });
 
-  const parsedRSS = { feed, posts };
-
-  return Promise.resolve(parsedRSS);
+  return { feed, posts };
 };

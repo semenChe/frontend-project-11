@@ -2,10 +2,14 @@ import { string, setLocale } from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
 import axios from 'axios';
+import { uniqueId } from 'lodash';
 
 import resources from './locales/index.js';
 import render from './render.js';
 import parseRSS from './utils/parser.js';
+
+const defaultLanguage = 'ru';
+const timeout = 5000;
 
 const elements = {
   form: document.querySelector('form'),
@@ -19,12 +23,6 @@ const elements = {
     body: document.querySelector('.modal-body'),
     fullArticleButton: document.querySelector('.full-article'),
   },
-};
-
-let counter = 0;
-const getId = () => {
-  counter += 1;
-  return counter;
 };
 
 setLocale({
@@ -54,7 +52,7 @@ const addFeeds = (id, title, description, watchedState) => {
 const addPosts = (feedId, posts, watchedState) => {
   const result = posts.map((post) => ({
     feedId,
-    id: getId(),
+    id: uniqueId(),
     title: post.title,
     description: post.description,
     link: post.link,
@@ -63,11 +61,10 @@ const addPosts = (feedId, posts, watchedState) => {
 };
 
 const postsUpdate = (url, feedId, watchedState) => {
-  const timeout = 5000;
   const inner = () => {
     getAxiosResponse(url)
-      .then((response) => parseRSS(response.data.contents))
-      .then((parsedRSS) => {
+      .then((response) => {
+        const parsedRSS = parseRSS(response.data.contents);
         const postsUrls = watchedState.posts
           .filter((post) => feedId === post.feedId)
           .map(({ link }) => link);
@@ -85,7 +82,6 @@ const postsUpdate = (url, feedId, watchedState) => {
 };
 
 export default () => {
-  const defaultLanguage = 'ru';
   const i18nInstance = i18next.createInstance();
   i18nInstance.init({
     lng: defaultLanguage,
@@ -128,9 +124,9 @@ export default () => {
             watchedState.processState = 'sending';
           })
           .then(() => getAxiosResponse(state.data))
-          .then((response) => parseRSS(response.data.contents))
-          .then((parsedRSS) => {
-            const feedId = getId();
+          .then((response) => {
+            const parsedRSS = parseRSS(response.data.contents);
+            const feedId = uniqueId();
             const title = parsedRSS.feed.channelTitle;
             const description = parsedRSS.feed.channelDescription;
 
