@@ -150,15 +150,11 @@ export default () => {
 
       elements.posts.addEventListener('click', (e) => {
         const postId = e.target.dataset.id;
-        if (postId) {
-          watchedState.readPostIds.add(postId);
-        }
-        if (e.target.dataset.bsTarget === '#modal') {
-          const post = state.posts
-            .find(({ id }) => postId === id);
-          const { title, description, link } = post;
-          watchedState.modal = { title, description, link };
-        }
+        watchedState.readPostIds.add(postId);
+        const post = state.posts
+          .find(({ id }) => postId === id);
+        const { title, description, link } = post;
+        watchedState.modal = { title, description, link };
       });
     });
 };
