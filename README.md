@@ -39,6 +39,15 @@ npm link
 ```sh
 make build
 ```
+## соборка приложения с использованием
+
+[![Webpack][Webpack-badge]][Webpack-url]
+[![Bootstrap][Bootstrap-badge]][Bootstrap-url]
+[![i18next][i18next-badge]][i18next-url]
+[![Axios][Axios-badge]][Axios-url]
+[![onChange][onChange-badge]][onChange-url]
+[![yup][yup-badge]][yup-url]
+
 ## Рекомендуемые минимальные требования к системе:
 ### Минимальные версии ОС:
 * Windows 10
