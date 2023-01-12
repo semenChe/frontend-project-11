@@ -93,7 +93,7 @@ export default (state, elements, i18nInstance) => (path, value) => {
         elements.btn.disabled = true;
       }
       if (value === 'failed') {
-        errorHandler(elements, state.validation.error, i18nInstance);
+        errorHandler(elements, state.error, i18nInstance);
       }
       if (value === 'finished') {
         finishHandler(state, elements, i18nInstance);

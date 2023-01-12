@@ -66,6 +66,7 @@ const addPosts = (feedId, posts, watchedState) => {
 const postsUpdate = (feedId, watchedState) => {
   const inner = () => {
     const linkesFeed = watchedState.feeds.map(({ link }) => getAxiosResponse(link));
+
     Promise.all(linkesFeed)
       .then((responses) => {
         const postsParsed = responses.map((response) => parseRSS(response.data.contents).posts);
@@ -121,8 +122,8 @@ export default () => {
         schema.validate(state.inputData)
           .then(() => {
             watchedState.processState = 'sending';
+            return getAxiosResponse(state.inputData);
           })
-          .then(() => getAxiosResponse(state.inputData))
           .then((response) => {
             const parsedRSS = parseRSS(response.data.contents);
             const feedId = uniqueId();
@@ -132,9 +133,10 @@ export default () => {
             addFeeds(feedId, title, description, state.inputData, watchedState);
             addPosts(feedId, parsedRSS.posts, watchedState);
 
-            postsUpdate(state.inputData, feedId, watchedState);
-
             watchedState.listOfFeeds.push(state.inputData);
+
+            postsUpdate(feedId, watchedState);
+
             watchedState.processState = 'finished';
           })
           .catch((err) => {
@@ -145,6 +147,7 @@ export default () => {
             watchedState.processState = 'filling';
           });
       });
+
       elements.posts.addEventListener('click', (e) => {
         const postId = e.target.dataset.id;
         if (postId) {
