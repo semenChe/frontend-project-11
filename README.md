@@ -39,25 +39,6 @@ npm link
 ```sh
 make build
 ```
-## соборка приложения с использованием
-
-[Webpack-badge]: https://img.shields.io/badge/Webpack-1A6BAC?style=flat&logo=webpack&logoColor=white
-[Webpack-url]: https://webpack.js.org
-
-[Bootstrap-badge]: https://img.shields.io/badge/Bootstrap-712CF9?style=flat&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-
-[i18next-badge]: https://img.shields.io/badge/i18next-26A69A?style=flat&logo=i18next&logoColor=white
-[i18next-url]: https://www.i18next.com
-
-[Axios-badge]: https://img.shields.io/badge/Axios-5A29E4?style=flat&logo=i18next&logoColor=white
-[Axios-url]: https://axios-http.com
-
-[onChange-badge]: https://img.shields.io/badge/onChange-gray?style=flat&logoColor=white
-[onChange-url]: https://github.com/jquense/yup
-
-[yup-badge]: https://img.shields.io/badge/yup-gray?style=flat&logoColor=white
-[yup-url]: https://github.com/sindresorhus/on-change
 
 ## Рекомендуемые минимальные требования к системе:
 ### Минимальные версии ОС:
