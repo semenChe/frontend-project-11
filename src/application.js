@@ -37,11 +37,9 @@ setLocale({
 
 const getAxiosResponse = (url) => {
   const allOriginsLink = 'https://allorigins.hexlet.app/get';
-
   const preparedURL = new URL(allOriginsLink);
   preparedURL.searchParams.set('disableCache', 'true');
   preparedURL.searchParams.set('url', url);
-
   return axios.get(preparedURL);
 };
 
@@ -55,17 +53,17 @@ const addFeeds = (id, title, description, link, watchedState) => {
 };
 
 const addPosts = (feedId, posts, watchedState) => {
-  const result = posts.map((post) => ({
+  const preparedPosts = posts.map((post) => ({
     feedId,
     id: uniqueId(),
     title: post.title,
     description: post.description,
     link: post.link,
   }));
-  watchedState.posts = result.concat(watchedState.posts);
+  watchedState.posts = preparedPosts.concat(watchedState.posts);
 };
 
-const postsUpdate = (url, feedId, watchedState) => {
+const postsUpdate = (feedId, watchedState) => {
   const inner = () => {
     const linkesFeed = watchedState.feeds.map(({ link }) => getAxiosResponse(link));
     Promise.all(linkesFeed)
@@ -96,56 +94,51 @@ export default () => {
     .then(() => {
       const state = {
         processState: 'filling',
-        data: '',
-        validation: {
-          state: 'valid',
-          error: '',
-        },
+        inputData: '',
+        error: '',
+        listOfFeeds: [],
+        feeds: [],
+        posts: [],
+        readPostIds: new Set(),
         modal: {
           title: '',
           description: '',
           link: '',
         },
-        listOfFeeds: [],
-        feeds: [],
-        posts: [],
-        readPostIds: new Set(),
       };
 
       const watchedState = onChange(state, render(state, elements, i18nInstance));
 
       elements.form.addEventListener('input', (e) => {
         e.preventDefault();
-        watchedState.data = e.target.value;
+        watchedState.inputData = e.target.value;
       });
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const schema = string().url().notOneOf(state.listOfFeeds).trim();
-        schema.validate(state.data)
+        schema.validate(state.inputData)
           .then(() => {
-            watchedState.validation.state = 'valid';
             watchedState.processState = 'sending';
           })
-          .then(() => getAxiosResponse(state.data))
+          .then(() => getAxiosResponse(state.inputData))
           .then((response) => {
             const parsedRSS = parseRSS(response.data.contents);
             const feedId = uniqueId();
             const title = parsedRSS.feed.channelTitle;
             const description = parsedRSS.feed.channelDescription;
 
-            addFeeds(feedId, title, description, state.data, watchedState);
+            addFeeds(feedId, title, description, state.inputData, watchedState);
             addPosts(feedId, parsedRSS.posts, watchedState);
 
-            postsUpdate(state.data, feedId, watchedState);
+            postsUpdate(state.inputData, feedId, watchedState);
 
-            watchedState.listOfFeeds.push(state.data);
+            watchedState.listOfFeeds.push(state.inputData);
             watchedState.processState = 'finished';
           })
           .catch((err) => {
-            watchedState.validation.state = 'invalid';
-            watchedState.validation.error = err.message ?? 'default';
+            watchedState.error = err.message ?? 'default';
             watchedState.processState = 'failed';
           })
           .finally(() => {

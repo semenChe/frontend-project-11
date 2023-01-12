@@ -63,10 +63,6 @@ const makeContainer = (title, state, elements, i18nInstance) => {
   }
 };
 
-const sendingHandler = (elements) => {
-  elements.btn.disabled = true;
-};
-
 const errorHandler = (elements, err, i18nInstance) => {
   elements.feedback.classList.remove('text-success');
   elements.feedback.classList.add('text-danger');
@@ -94,7 +90,7 @@ export default (state, elements, i18nInstance) => (path, value) => {
   switch (path) {
     case 'processState':
       if (value === 'sending') {
-        sendingHandler(elements);
+        elements.btn.disabled = true;
       }
       if (value === 'failed') {
         errorHandler(elements, state.validation.error, i18nInstance);
