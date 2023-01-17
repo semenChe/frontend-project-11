@@ -152,7 +152,9 @@ export default () => {
 
       elements.posts.addEventListener('click', (e) => {
         const postId = e.target.dataset.id;
-        watchedState.readPostIds.add(postId);
+        if (postId) {
+          watchedState.readPostIds.add(postId);
+        }
       });
     });
 };
