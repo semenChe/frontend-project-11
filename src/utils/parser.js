@@ -9,7 +9,7 @@ export default (contents) => {
   const channel = xmlDocument.querySelector('channel');
   const channelTitle = xmlDocument.querySelector('channel title').textContent;
   const channelDescription = xmlDocument.querySelector('channel description').textContent;
-  const feed = { channelTitle, channelDescription };
+  const feed = { title: channelTitle, description: channelDescription };
 
   const itemElements = channel.getElementsByTagName('item');
   const posts = [...itemElements].map((item) => {

@@ -1,7 +1,7 @@
 const renderingPosts = (state, i18nInstance, card) => {
   const listGroup = document.createElement('ul');
   listGroup.classList.add('list-group', 'border-0', 'rounded-0');
-  state.posts.forEach((post) => {
+  state.uploadedData.posts.forEach((post) => {
     const listGroupItem = document.createElement('li');
     listGroupItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     const a = document.createElement('a');
@@ -27,7 +27,7 @@ const renderingPosts = (state, i18nInstance, card) => {
 const renderingFeeds = (state, card) => {
   const listGroup = document.createElement('ul');
   listGroup.classList.add('list-group', 'border-0', 'rounded-0');
-  state.feeds.forEach((feed) => {
+  state.uploadedData.feeds.forEach((feed) => {
     const listGroupItem = document.createElement('li');
     listGroupItem.classList.add('list-group-item', 'border-0', 'border-end-0');
     const h3 = document.createElement('h3');
@@ -68,6 +68,7 @@ const errorHandler = (elements, err, i18nInstance) => {
   elements.feedback.classList.add('text-danger');
   elements.feedback.textContent = i18nInstance.t(`errors.${err.replace(/ /g, '')}`);
   if (err !== 'Network Error') elements.input.classList.add('is-invalid');
+  elements.btn.disabled = false;
 };
 
 const finishHandler = (state, elements, i18nInstance) => {
@@ -79,8 +80,8 @@ const finishHandler = (state, elements, i18nInstance) => {
 
   elements.input.focus();
   elements.form.reset();
-
   elements.btn.disabled = false;
+
   elements.feedback.classList.remove('text-danger');
   elements.feedback.classList.add('text-success');
   elements.feedback.textContent = i18nInstance.t('rssAdded');
@@ -88,18 +89,15 @@ const finishHandler = (state, elements, i18nInstance) => {
 
 export default (state, elements, i18nInstance) => (path, value) => {
   switch (path) {
-    case 'processState':
+    case 'registrationProcess.state':
       if (value === 'sending') {
         elements.btn.disabled = true;
       }
       if (value === 'failed') {
-        errorHandler(elements, state.error, i18nInstance);
+        errorHandler(elements, state.registrationProcess.error, i18nInstance);
       }
       if (value === 'finished') {
         finishHandler(state, elements, i18nInstance);
-      }
-      if (value === 'filling') {
-        elements.btn.disabled = false;
       }
       break;
     case 'readPostIds':

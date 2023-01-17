@@ -19,6 +19,7 @@ const elements = {
   posts: document.querySelector('.posts'),
   feeds: document.querySelector('.feeds'),
   modal: {
+    modalElement: document.querySelector('.modal'),
     title: document.querySelector('.modal-title'),
     body: document.querySelector('.modal-body'),
     fullArticleButton: document.querySelector('.full-article'),
@@ -28,7 +29,7 @@ const elements = {
 setLocale({
   mixed: {
     notOneOf: 'rssAlreadyExists',
-    default: 'dataIsNotValid',
+    defaultError: 'dataIsNotValid',
   },
   string: {
     url: 'notValidURL',
@@ -43,41 +44,34 @@ const getAxiosResponse = (url) => {
   return axios.get(preparedURL);
 };
 
-const addFeeds = (id, title, description, link, watchedState) => {
-  watchedState.feeds.push({
-    id,
-    title,
-    description,
-    link,
-  });
+const addFeeds = (id, parsedFeed, link, watchedState) => {
+  watchedState.uploadedData.feeds.push({ ...parsedFeed, id, link });
 };
 
 const addPosts = (feedId, posts, watchedState) => {
-  const preparedPosts = posts.map((post) => ({
-    feedId,
-    id: uniqueId(),
-    title: post.title,
-    description: post.description,
-    link: post.link,
-  }));
-  watchedState.posts = preparedPosts.concat(watchedState.posts);
+  const preparedPosts = posts.map((post) => ({ ...post, feedId, id: uniqueId() }));
+  watchedState.uploadedData.posts = preparedPosts.concat(watchedState.uploadedData.posts);
 };
 
 const postsUpdate = (feedId, watchedState) => {
   const inner = () => {
-    const linkesFeed = watchedState.feeds.map(({ link }) => getAxiosResponse(link));
+    const linkesFeed = watchedState.uploadedData.feeds.map(({ link }) => getAxiosResponse(link)
+      .then((v) => ({ result: 'success', value: parseRSS(v.data.contents).posts }))
+      .catch((e) => ({ result: 'error', error: e })));
 
     Promise.all(linkesFeed)
       .then((responses) => {
-        const postsParsed = responses.map((response) => parseRSS(response.data.contents).posts);
+        const postsParsed = responses
+          .filter(({ result }) => result === 'success')
+          .map(({ value }) => value);
         const receivedPosts = flatten(postsParsed);
-        const linkPosts = watchedState.posts.map(({ link }) => link);
+        const linkPosts = watchedState.uploadedData.posts.map(({ link }) => link);
         const newPosts = receivedPosts.filter(({ link }) => !linkPosts.includes(link));
         if (newPosts.length > 0) {
           addPosts(feedId, newPosts, watchedState);
         }
       })
-      .catch(console.error)
+      .catch((console.error))
       .finally(() => {
         setTimeout(inner, timeout);
       });
@@ -94,12 +88,15 @@ export default () => {
   })
     .then(() => {
       const state = {
-        processState: 'filling',
         inputData: '',
-        error: '',
-        listOfFeeds: [],
-        feeds: [],
-        posts: [],
+        registrationProcess: {
+          state: 'filling',
+          error: '',
+        },
+        uploadedData: {
+          feeds: [],
+          posts: [],
+        },
         readPostIds: new Set(),
         modal: {
           title: '',
@@ -118,43 +115,44 @@ export default () => {
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const schema = string().url().notOneOf(state.listOfFeeds).trim();
+        const schema = string()
+          .url()
+          .notOneOf(state.uploadedData.feeds.map(({ link }) => link))
+          .trim();
         schema.validate(state.inputData)
           .then(() => {
-            watchedState.processState = 'sending';
+            watchedState.registrationProcess.state = 'sending';
             return getAxiosResponse(state.inputData);
           })
           .then((response) => {
             const parsedRSS = parseRSS(response.data.contents);
             const feedId = uniqueId();
-            const title = parsedRSS.feed.channelTitle;
-            const description = parsedRSS.feed.channelDescription;
 
-            addFeeds(feedId, title, description, state.inputData, watchedState);
+            addFeeds(feedId, parsedRSS.feed, state.inputData, watchedState);
             addPosts(feedId, parsedRSS.posts, watchedState);
-
-            watchedState.listOfFeeds.push(state.inputData);
 
             postsUpdate(feedId, watchedState);
 
-            watchedState.processState = 'finished';
+            watchedState.registrationProcess.state = 'finished';
           })
           .catch((err) => {
-            watchedState.error = err.message ?? 'default';
-            watchedState.processState = 'failed';
-          })
-          .finally(() => {
-            watchedState.processState = 'filling';
+            watchedState.registrationProcess.error = err.message ?? 'defaultError';
+            watchedState.registrationProcess.state = 'failed';
           });
+      });
+
+      elements.modal.modalElement.addEventListener('show.bs.modal', (e) => {
+        const postId = e.relatedTarget.getAttribute('data-id');
+        watchedState.readPostIds.add(postId);
+        const post = state.uploadedData.posts
+          .find(({ id }) => postId === id);
+        const { title, description, link } = post;
+        watchedState.modal = { title, description, link };
       });
 
       elements.posts.addEventListener('click', (e) => {
         const postId = e.target.dataset.id;
         watchedState.readPostIds.add(postId);
-        const post = state.posts
-          .find(({ id }) => postId === id);
-        const { title, description, link } = post;
-        watchedState.modal = { title, description, link };
       });
     });
 };
