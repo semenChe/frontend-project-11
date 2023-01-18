@@ -55,16 +55,18 @@ const addPosts = (feedId, posts, watchedState) => {
 
 const postsUpdate = (feedId, watchedState) => {
   const inner = () => {
-    const linkesFeed = watchedState.uploadedData.feeds.map(({ link }) => getAxiosResponse(link)
-      .then((v) => ({ result: 'success', value: parseRSS(v.data.contents).posts }))
-      .catch((e) => ({ result: 'error', error: e })));
+    const linkesFeed = watchedState.uploadedData.feeds.map(({ link }) => getAxiosResponse(link));
 
-    Promise.all(linkesFeed)
+    Promise.allSettled(linkesFeed)
       .then((responses) => {
         const postsParsed = responses
-          .filter(({ result }) => result === 'success')
-          .map(({ value }) => value);
+          .filter(({ status }) => status === 'fulfilled')
+          .map(({ value }) => {
+            const parsedData = parseRSS(value.data.contents);
+            return parsedData ? parsedData.posts : [];
+          });
         const receivedPosts = flatten(postsParsed);
+        console.log(receivedPosts);
         const linkPosts = watchedState.uploadedData.posts.map(({ link }) => link);
         const newPosts = receivedPosts.filter(({ link }) => !linkPosts.includes(link));
         if (newPosts.length > 0) {
@@ -126,6 +128,9 @@ export default () => {
           })
           .then((response) => {
             const parsedRSS = parseRSS(response.data.contents);
+            if (!parsedRSS) {
+              throw new Error('noRSS');
+            }
             const feedId = uniqueId();
 
             addFeeds(feedId, parsedRSS.feed, state.inputData, watchedState);
