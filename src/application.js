@@ -19,7 +19,7 @@ const getAxiosResponse = (url) => {
   return axios.get(preparedURL);
 };
 
-const validation = (state) => {
+const validate = (state) => {
   const schema = string()
     .url()
     .notOneOf(state.uploadedData.feeds.map(({ link }) => link))
@@ -125,7 +125,7 @@ export default () => {
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        validation(state)
+        validate(state)
           .then(() => {
             watchedState.processOfAddingRss.state = 'sending';
             return getAxiosResponse(state.inputData);
