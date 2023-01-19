@@ -87,14 +87,23 @@ const finishHandler = (state, elements, i18nInstance) => {
   elements.feedback.textContent = i18nInstance.t('rssAdded');
 };
 
+const openModalWindow = (state, elements, postId) => {
+  const post = state.uploadedData.posts
+    .find(({ id }) => postId === id);
+  const { title, description, link } = post;
+  elements.modal.title.textContent = title;
+  elements.modal.body.textContent = description;
+  elements.modal.fullArticleButton.href = link;
+};
+
 export default (state, elements, i18nInstance) => (path, value) => {
   switch (path) {
-    case 'registrationProcess.state':
+    case 'processOfAddingRss.state':
       if (value === 'sending') {
         elements.btn.disabled = true;
       }
       if (value === 'failed') {
-        errorHandler(elements, state.registrationProcess.error, i18nInstance);
+        errorHandler(elements, state.processOfAddingRss.error, i18nInstance);
       }
       if (value === 'finished') {
         finishHandler(state, elements, i18nInstance);
@@ -106,10 +115,8 @@ export default (state, elements, i18nInstance) => (path, value) => {
     case 'posts':
       makeContainer('posts', state, elements, i18nInstance);
       break;
-    case 'modal':
-      elements.modal.title.textContent = value.title;
-      elements.modal.body.textContent = value.description;
-      elements.modal.fullArticleButton.href = value.link;
+    case 'modalPostId':
+      openModalWindow(state, elements, value);
       break;
 
     default:
