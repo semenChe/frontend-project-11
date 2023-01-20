@@ -19,12 +19,12 @@ const getAxiosResponse = (url) => {
   return axios.get(preparedURL);
 };
 
-const validate = (state) => {
+const validate = (newURL, listAddedURLs) => {
   const schema = string()
     .url()
-    .notOneOf(state.uploadedData.feeds.map(({ link }) => link))
+    .notOneOf(listAddedURLs)
     .trim();
-  return schema.validate(state.inputData);
+  return schema.validate(newURL);
 };
 
 const addFeeds = (id, parsedFeed, link, watchedState) => {
@@ -124,8 +124,9 @@ export default () => {
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
+        const listAddedURLs = state.uploadedData.feeds.map(({ link }) => link);
 
-        validate(state)
+        validate(state.inputData, listAddedURLs)
           .then(() => {
             watchedState.processOfAddingRss.state = 'sending';
             return getAxiosResponse(state.inputData);
